@@ -1,5 +1,7 @@
+import { lazy } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import Home from './routes/home';
+
+const Home = lazy(() => import('./routes/home'));
 
 export default function Router() {
 	const location = useLocation();
