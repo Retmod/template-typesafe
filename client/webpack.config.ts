@@ -1,15 +1,21 @@
 import * as path from 'path';
 import * as webpack from 'webpack';
 import HTMLWebpackPlugin from 'html-webpack-plugin';
+import { ESBuildMinifyPlugin } from 'esbuild-loader';
 
 const config: webpack.Configuration = {
 	output: {
 		path: path.join(__dirname, '/build'), // the bundle output path
-		filename: 'bundle.js', // the name of the bundle
+		filename: '[name].bundle.js', // the name of the bundle
+		chunkFilename: '[name].bundle.js', // the name of the chunk
+		publicPath: '/', // set the public path for the assets
 	},
 	entry: ['./src/index.tsx'],
 	resolve: {
 		extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.png', '.svg', '.ttf'],
+	},
+	stats: {
+		errorDetails: true,
 	},
 	module: {
 		rules: [
@@ -23,12 +29,10 @@ const config: webpack.Configuration = {
 			},
 			{
 				test: /\.tsx?$/,
-				exclude: /(node_modules|\.webpack)/,
-				use: {
-					loader: 'ts-loader',
-					options: {
-						transpileOnly: true,
-					},
+				loader: 'esbuild-loader',
+				options: {
+					loader: 'tsx',
+					target: 'esnext',
 				},
 			},
 			{
@@ -43,6 +47,16 @@ const config: webpack.Configuration = {
 			template: 'public/index.html', // to import index.html file inside index.js
 		}),
 	],
+	optimization: {
+		splitChunks: {
+			chunks: 'all',
+		},
+		minimizer: [
+			new ESBuildMinifyPlugin({
+				minify: true,
+			}),
+		],
+	},
 };
 
 export default config;
