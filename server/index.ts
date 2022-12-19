@@ -21,8 +21,8 @@ const appRouter = t.router({
 	hello: t.procedure
 		.input(z.string())
 		.output(z.string())
-		.query((inp) => {
-			return `Hello ${inp}`;
+		.query(({ input: inp }) => {
+			return `Hello, ${inp}! Welcome to Retmod!`;
 		}),
 	getUsers: t.procedure.query(() => {
 		return prisma.user.findMany();
