@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
 import { fileURLToPath } from 'url';
 import * as trpc from '@trpc/server';
+import * as trpcExpress from '@trpc/server/adapters/express';
 import { z } from 'zod';
 
 const prisma = new PrismaClient();
@@ -38,6 +39,13 @@ const app = express();
 app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
 
 app.use(express.static('public'));
+
+app.use(
+	'/trpc',
+	trpcExpress.createExpressMiddleware({
+		router: appRouter,
+	}),
+);
 
 app.get('/', (req, res) => {
 	res.sendFile(path.join(__dirname, '../client/build/index.html'));
